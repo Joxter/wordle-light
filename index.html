@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wordle by Joxter</title>
+</head>
+<body>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+    <div style="width: 320px; margin: 0 auto">
+        <div class="board">
+            <style>
+                .board-row {
+                    display: flex;
+                    justify-content: space-between;
+                }
+                .board-row:not(:first-child){
+                    margin-top: 2px;
+                }
+
+                .box {
+                    border: 1px solid #444;
+                    background: #eee;
+                    border-radius: 8px;
+                    width: calc(320px/5 - 2px);
+                    height: calc(320px/5 - 2px);
+                }
+            </style>
+            <div class="board-row">
+                <div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div>
+            </div>
+            <div class="board-row">
+                <div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div>
+            </div>
+            <div class="board-row">
+                <div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div>
+            </div>
+            <div class="board-row">
+                <div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div>
+            </div>
+            <div class="board-row">
+                <div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div><div class="box"></div>
+            </div>
+        </div>
+        <div class="keyboard">
+            <style>
+                .keyboard {
+                }
+                .row {
+                    display: flex;
+                    gap: 4px;
+                }
+                .row:not(:first-child){
+                    margin-top: 4px;
+                }
+                .row button {
+                    flex: 1 1 auto;
+                    border: 0;
+                    color: #555;
+                    background: #eee;
+                    border-radius: 8px;
+                    margin: 0;
+                    padding: 3px 0;
+                    font-size: 22px;
+                }
+            </style>
+            <div class="row">
+                <button type="button">q</button>
+                <button type="button">w</button>
+                <button type="button">e</button>
+                <button type="button">r</button>
+                <button type="button">t</button>
+                <button type="button">y</button>
+                <button type="button">u</button>
+                <button type="button">i</button>
+                <button type="button">o</button>
+                <button type="button">p</button>
+            </div>
+            <div class="row">
+                <button type="button">a</button>
+                <button type="button">s</button>
+                <button type="button">d</button>
+                <button type="button">f</button>
+                <button type="button">g</button>
+                <button type="button">h</button>
+                <button type="button">j</button>
+                <button type="button">k</button>
+                <button type="button">l</button>
+            </div>
+            <div class="row">
+                <button type="button">del</button>
+                <button type="button">z</button>
+                <button type="button">x</button>
+                <button type="button">c</button>
+                <button type="button">v</button>
+                <button type="button">b</button>
+                <button type="button">n</button>
+                <button type="button">m</button>
+                <button type="button">enter</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
