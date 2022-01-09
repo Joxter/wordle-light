@@ -12,8 +12,9 @@ body {
     background-color: #fff;
     color: #333;
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-    padding: 0;
     margin: 0;
+    padding: 0;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 .container {
@@ -23,8 +24,16 @@ body {
     gap: 20px;
     max-width: 600px;
     margin: 0 auto;
-    padding: 20px;
-    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    padding-bottom: 20px;
+}
+
+.title-label {
+    font-size: 18px;
+    position: absolute;
+    color: #ff0000;
+    border-radius: 10px;
+    padding: 2px 8px;
+    transform: rotate(12grad) translate(-20px, 0px);
 }
 
 .rules {
@@ -62,8 +71,8 @@ body {
     height: 60px;
     font-size: 48px;
     line-height: 60px;
-    border: 1px solid #444;
-    background: #eee;
+    border: 1px solid #a0a0a0;
+    background: #f7f7f7;
     border-radius: 8px;
     text-align: center;
     text-transform: uppercase;

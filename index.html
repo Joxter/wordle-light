@@ -10,7 +10,7 @@
 <div class="container">
   <div>
     <header>
-      <h1 style="text-align: center">Wordle from Joxter</h1>
+      <h1 style="text-align: center">Wordle<span class="title-label">Joxter</span></h1>
       <div class="rules" id="rules" style="display:none;">
         <p>You have 6 guesses to guess the correct word.</p>
         <p>You can guess any valid word.</p>
@@ -57,7 +57,7 @@
     </div>
   </div>
   <div style="text-align: center">
-    <button type="button" class="restart-btn" id="restart">Restart</button>
+    <button type="button" class="restart-btn" id="restart">New game</button>
     <p id="secret" class="secret">secret</p>
   </div>
   <div class="keyboard" id="keyboard">
@@ -108,7 +108,7 @@
   let rulesBtnEL = document.querySelector('#rules-btn');
   let boxesEL = document.querySelectorAll('#board .box');
 
-  let dictionary = new Set(['qwerty', 'asdfg', 'zxcvb']);
+  let dictionary = new Set(['qwert', 'asdfg', 'zxcvb']);
   let alphabet = new Set('qwertyuiopasdfghjklzxcvbnm'.split(''));
 
   let stage; // going win fail
@@ -197,25 +197,28 @@
   }
 
   function submitWord() {
-    if (stage === 'going' && currentInput.length === 5) {
-      if (!dictionary.has(currentInput.join(''))) {
-        alert(`Can't find a word "${currentInput.join('')}" :(`);
-        return;
-      }
-
-      let attempt = compareWords();
-      let revealed = addAttempt(attempt);
-      saveState();
-
-      if (revealed) {
-        toWin();
-        localStorage.clear();
-      } else if (attempts.length === 6) {
-        toFail();
-        localStorage.clear();
-      }
-      toggleButtons();
+    if (stage !== 'going' || currentInput.length < 5) {
+      alert('Should be 5 letters');
+      return;
     }
+
+    if (!dictionary.has(currentInput.join(''))) {
+      alert(`Can't find a word "${currentInput.join('')}" :(`);
+      return;
+    }
+
+    let attempt = compareWords();
+    let revealed = addAttempt(attempt);
+    saveState();
+
+    if (revealed) {
+      toWin();
+      localStorage.clear();
+    } else if (attempts.length === 6) {
+      toFail();
+      localStorage.clear();
+    }
+    toggleButtons();
   }
 
   function saveState() {
