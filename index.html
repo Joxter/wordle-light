@@ -2,44 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="./styles.css">
   <title>Wordle by Joxter</title>
 </head>
 <body>
-<style>
-  * {
-    box-sizing: border-box;
-  }
-</style>
-<div style="width: 320px">
+<div class="container">
   <div class="board" id="board">
-    <style>
-      .board {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 5px;
-      }
-
-      .box {
-        font-size: 48px;
-        border: 1px solid #444;
-        background: #eee;
-        border-radius: 8px;
-        height: 60px;
-        text-align: center;
-      }
-
-      .red {
-        background: red !important;
-      }
-
-      .yellow {
-        background: yellow !important;
-      }
-
-      .green {
-        background: green !important;
-      }
-    </style>
     <div class="box"></div>
     <div class="box"></div>
     <div class="box"></div>
@@ -71,35 +40,11 @@
     <div class="box"></div>
     <div class="box"></div>
   </div>
+  <div style="text-align: center">
+    <button type="button" class="restart-btn">Restart</button>
+    <p id="secret" class="secret">secret</p>
+  </div>
   <div class="keyboard" id="keyboard">
-    <style>
-      .keyboard {
-      }
-
-      .row {
-        display: flex;
-        gap: 4px;
-      }
-
-      .row:not(:first-child) {
-        margin-top: 4px;
-      }
-
-      .row button {
-        flex: 1 1 auto;
-        border: 0;
-        color: #555;
-        background: #eee;
-        border-radius: 8px;
-        margin: 0;
-        padding: 3px 0;
-        font-size: 22px;
-      }
-
-      .row button[disabled] {
-        opacity: 0.3;
-      }
-    </style>
     <div class="row">
       <button type="button" id="letter-q">q</button>
       <button type="button" id="letter-w">w</button>
