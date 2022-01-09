@@ -8,40 +8,56 @@
 </head>
 <body>
 <div class="container">
-  <div class="board" id="board">
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
+  <div>
+    <header>
+      <h1 style="text-align: center">Wordle from Joxter</h1>
+      <div class="rules" id="rules" style="display:none;">
+        <p>You have 6 guesses to guess the correct word.</p>
+        <p>You can guess any valid word.</p>
+        <p>After each guess, each letter will turn green, yellow, or gray.</p>
+        <p><span class="green">A</span> - Correct letter, correct spot</p>
+        <p><span class="yellow">B</span> - Correct letter, wrong spot</p>
+      </div>
+      <div style="text-align: center">
+        <button class="rules-btn" type="button" id="rules-btn">Ok, close the rules</button>
+      </div>
+
+    </header>
+    <div class="board" id="board">
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+      <div class="box"></div>
+    </div>
   </div>
   <div style="text-align: center">
-    <button type="button" class="restart-btn">Restart</button>
+    <button type="button" class="restart-btn" id="restart">Restart</button>
     <p id="secret" class="secret">secret</p>
   </div>
   <div class="keyboard" id="keyboard">
@@ -86,43 +102,81 @@
   let boardEL = document.querySelector('#board');
   let deleteEL = document.querySelector('#delete');
   let enterEL = document.querySelector('#enter');
-
+  let restartEL = document.querySelector('#restart');
+  let secretEL = document.querySelector('#secret');
+  let rulesEL = document.querySelector('#rules');
+  let rulesBtnEL = document.querySelector('#rules-btn');
   let boxesEL = document.querySelectorAll('#board .box');
 
   let dictionary = new Set(['qwerty', 'asdfg', 'zxcvb']);
   let alphabet = new Set('qwertyuiopasdfghjklzxcvbnm'.split(''));
 
-  // TODO get saved data from localStorage
+  let stage; // going win fail
+  let secretWord;
+  let attempts;
+  let currentInput;
 
-  // state
-  let stage = 'going'; // going win fail
-  let secretWord = 'asdfg';
-  let attempts = [];
-  let currentInput = [];
+  try {
+    stage = getSaved('stage') || 'going';
+    secretWord = getSaved('secretWord') || getRandomWord();
+    attempts = getSaved('attempts') || [];
+    currentInput = [];
 
-  toggleButtons();
+    toggleButtons();
+    firstRender();
 
-  document.addEventListener('keydown', (ev) => {
-    if (ev.key === 'Enter') {
-      submitWord();
-    } else if (ev.key === 'Backspace') {
-      removeLetter();
-    } else if (alphabet.has(ev.key.toLowerCase())) {
-      printLetter(ev.key);
-    }
-  });
-
-  keyboardEL.addEventListener('click', (ev) => {
-    if (ev.target.nodeName === 'BUTTON') {
-      if (ev.target === deleteEL) {
-        removeLetter();
-      } else if (ev.target === enterEL) {
-        submitWord();
+    rulesBtnEL.addEventListener('click', () => {
+      if (rulesEL.style.display) {
+        rulesEL.style.display = '';
+        rulesBtnEL.innerHTML = 'Ok, close the rules';
       } else {
-        printLetter(ev.target.innerText);
+        rulesEL.style.display = 'none';
+        rulesBtnEL.innerHTML = 'How to play?';
       }
+    });
+    restartEL.addEventListener('click', () => startNewGame());
+
+    document.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter') {
+        if (stage === 'win' || stage === 'fail') {
+          startNewGame();
+        } else {
+          submitWord();
+        }
+      } else if (ev.key === 'Backspace') {
+        removeLetter();
+      } else if (alphabet.has(ev.key.toLowerCase())) {
+        printLetter(ev.key);
+      }
+    });
+
+    keyboardEL.addEventListener('click', (ev) => {
+      if (ev.target.nodeName === 'BUTTON') {
+        if (ev.target === deleteEL) {
+          removeLetter();
+        } else if (ev.target === enterEL) {
+          submitWord();
+        } else {
+          printLetter(ev.target.innerText);
+        }
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    localStorage.clear();
+    alert('Something went wrong:(\nPlease try refreshing the page');
+  }
+
+  function paintOverKeyboardKey(letter, color) {
+    let keyboardLetter = document.querySelector(`#letter-${letter}`);
+    if (color === 'green') {
+      keyboardLetter.classList.add('green');
+      keyboardLetter.classList.remove('yellow');
+    } else if (color === 'yellow') {
+      keyboardLetter.classList.add('yellow');
     }
-  });
+  }
 
   function printLetter(letter) {
     if (stage === 'going' && currentInput.length < 5) {
@@ -144,72 +198,146 @@
 
   function submitWord() {
     if (stage === 'going' && currentInput.length === 5) {
-      let result = compareWords(currentInput.join(''), secretWord);
-
-      let revealed = addAttempt(result);
-      if (revealed) {
-        stage = 'win';
-        alert('win!!!');
-      } else if (attempts.length === 6) {
-        alert('fail :(');
+      if (!dictionary.has(currentInput.join(''))) {
+        alert(`Can't find a word "${currentInput.join('')}" :(`);
+        return;
       }
-    } else {
-      alert(`"${currentInput.join('')}" is not 5 letter length`);
+
+      let attempt = compareWords();
+      let revealed = addAttempt(attempt);
+      saveState();
+
+      if (revealed) {
+        toWin();
+        localStorage.clear();
+      } else if (attempts.length === 6) {
+        toFail();
+        localStorage.clear();
+      }
+      toggleButtons();
     }
   }
 
-  function compareWords(wordA, wordB) {
+  function saveState() {
+    save('stage', stage);
+    save('secretWord', secretWord);
+    save('attempts', attempts);
+  }
+
+  function toWin() {
+    stage = 'win';
+    secretEL.style.display = 'block';
+    secretEL.innerHTML = 'Congratulations!';
+  }
+
+  function toFail() {
+    stage = 'fail';
+    secretEL.style.display = 'block';
+    secretEL.innerHTML = `Oops:( The word was ${secretWord.toUpperCase()}`;
+  }
+
+  function startNewGame() {
+    secretWord = getRandomWord();
+    stage = 'going';
+    attempts = [];
+    currentInput = [];
+    restartEL.blur();
+
+    secretEL.style.display = '';
+    boxesEL.forEach(el => {
+      el.innerHTML = '';
+      el.classList.remove('green');
+      el.classList.remove('yellow');
+    });
+    keyboardEL.querySelectorAll('button').forEach(el => {
+      el.classList.remove('green');
+      el.classList.remove('yellow');
+    });
+
+    saveState();
+    toggleButtons();
+  }
+
+  function getRandomWord() {
+    let rand = Math.floor(Math.random() * dictionary.size);
+
+    let i = 0;
+    for (let word of dictionary) {
+      if (i === rand) return word;
+      i++;
+    }
+
+    return 'table';
+  }
+
+  function compareWords() {
     let res = [];
 
     for (let i = 0; i < 5; i++) {
-      if (wordA[i] === wordB[i]) {
-        res.push('green');
-        wordB = wordB.replace(wordA[i], '*');
-      } else if (wordB.includes(wordA[i])) {
-        res.push('yellow');
-        wordB = wordB.replace(wordA[i], '*');
-      } else {
-        res.push(null);
+      let color = null;
+
+      if (currentInput[i] === secretWord[i]) {
+        color = 'green';
+      } else if (secretWord.includes(currentInput[i])) {
+        color = 'yellow';
       }
+      res.push({color, letter: currentInput[i]});
     }
 
     return res;
   }
 
-  function addAttempt(res) {
+  function addAttempt(attempt) {
     if (stage !== 'going') return;
 
-    let newAttempt = [];
-
-    let start = attempts.length * 5;
     let revealed = true;
     for (let i = 0; i < 5; i++) {
-      let color = res[i];
-      let letter = currentInput[i];
-      newAttempt.push({color, letter});
+      const {color, letter} = attempt[i];
       if (color !== 'green') revealed = false;
 
-      if (res[i]) {
-        boxesEL[start + i].classList.add(color);
-        let keyboardLetter = document.querySelector(`#letter-${letter}`);
-        keyboardLetter.classList.add(color);
-        if (color === 'green') {
-          keyboardLetter.classList.add('green');
-          keyboardLetter.classList.remove('yellow');
-        } else {
-          keyboardLetter.classList.add('yellow');
-        }
+      if (color) {
+        // todo add animations
+        boxesEL[attempts.length * 5 + i].classList.add(color);
+        paintOverKeyboardKey(letter, color);
       }
     }
-    attempts.push(newAttempt);
+    attempts.push(attempt);
     currentInput = [];
 
     return revealed;
   }
 
+  function firstRender() {
+    let i = 0;
+    attempts.forEach(attempt => {
+      attempt.forEach(({color, letter}) => {
+        boxesEL[i].classList.add(color);
+        boxesEL[i].innerHTML = letter;
+        paintOverKeyboardKey(letter, color);
+        i++;
+      });
+    });
+  }
+
   function toggleButtons() {
     deleteEL.toggleAttribute('disabled', currentInput.length === 0);
     enterEL.toggleAttribute('disabled', currentInput.length < 5);
+  }
+
+  function save(key, value) {
+    try {
+      return localStorage.setItem(key, JSON.stringify(value));
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function getSaved(key) {
+    try {
+      return JSON.parse(localStorage.getItem(key));
+    } catch (err) {
+      return null;
+    }
   }
 </script>
 </body>
