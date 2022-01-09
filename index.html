@@ -24,11 +24,27 @@
         border: 1px solid #444;
         background: #eee;
         border-radius: 8px;
-        /*aspect-ratio: 1;*/
         height: 60px;
         text-align: center;
       }
+
+      .red {
+        background: red !important;
+      }
+
+      .yellow {
+        background: yellow !important;
+      }
+
+      .green {
+        background: green !important;
+      }
     </style>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
     <div class="box"></div>
     <div class="box"></div>
     <div class="box"></div>
@@ -85,37 +101,37 @@
       }
     </style>
     <div class="row">
-      <button type="button">q</button>
-      <button type="button">w</button>
-      <button type="button">e</button>
-      <button type="button">r</button>
-      <button type="button">t</button>
-      <button type="button">y</button>
-      <button type="button">u</button>
-      <button type="button">i</button>
-      <button type="button">o</button>
-      <button type="button">p</button>
+      <button type="button" id="letter-q">q</button>
+      <button type="button" id="letter-w">w</button>
+      <button type="button" id="letter-e">e</button>
+      <button type="button" id="letter-r">r</button>
+      <button type="button" id="letter-t">t</button>
+      <button type="button" id="letter-y">y</button>
+      <button type="button" id="letter-u">u</button>
+      <button type="button" id="letter-i">i</button>
+      <button type="button" id="letter-o">o</button>
+      <button type="button" id="letter-p">p</button>
     </div>
     <div class="row">
-      <button type="button">a</button>
-      <button type="button">s</button>
-      <button type="button">d</button>
-      <button type="button">f</button>
-      <button type="button">g</button>
-      <button type="button">h</button>
-      <button type="button">j</button>
-      <button type="button">k</button>
-      <button type="button">l</button>
+      <button type="button" id="letter-a">a</button>
+      <button type="button" id="letter-s">s</button>
+      <button type="button" id="letter-d">d</button>
+      <button type="button" id="letter-f">f</button>
+      <button type="button" id="letter-g">g</button>
+      <button type="button" id="letter-h">h</button>
+      <button type="button" id="letter-j">j</button>
+      <button type="button" id="letter-k">k</button>
+      <button type="button" id="letter-l">l</button>
     </div>
     <div class="row">
       <button type="button" id="delete">del</button>
-      <button type="button">z</button>
-      <button type="button">x</button>
-      <button type="button">c</button>
-      <button type="button">v</button>
-      <button type="button">b</button>
-      <button type="button">n</button>
-      <button type="button">m</button>
+      <button type="button" id="letter-z">z</button>
+      <button type="button" id="letter-x">x</button>
+      <button type="button" id="letter-c">c</button>
+      <button type="button" id="letter-v">v</button>
+      <button type="button" id="letter-b">b</button>
+      <button type="button" id="letter-n">n</button>
+      <button type="button" id="letter-m">m</button>
       <button type="button" id="enter">enter</button>
     </div>
   </div>
@@ -129,22 +145,34 @@
   let boxesEL = document.querySelectorAll('#board .box');
 
   let dictionary = new Set(['qwerty', 'asdfg', 'zxcvb']);
+  let alphabet = new Set('qwertyuiopasdfghjklzxcvbnm'.split(''));
 
   // TODO get saved data from localStorage
 
   // state
+  let stage = 'going'; // going win fail
   let secretWord = 'asdfg';
   let attempts = [];
   let currentInput = [];
 
   toggleButtons();
 
+  document.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter') {
+      submitWord();
+    } else if (ev.key === 'Backspace') {
+      removeLetter();
+    } else if (alphabet.has(ev.key.toLowerCase())) {
+      printLetter(ev.key);
+    }
+  });
+
   keyboardEL.addEventListener('click', (ev) => {
     if (ev.target.nodeName === 'BUTTON') {
       if (ev.target === deleteEL) {
         removeLetter();
       } else if (ev.target === enterEL) {
-        submitWord(currentInput);
+        submitWord();
       } else {
         printLetter(ev.target.innerText);
       }
@@ -152,7 +180,7 @@
   });
 
   function printLetter(letter) {
-    if (currentInput.length < 5) {
+    if (stage === 'going' && currentInput.length < 5) {
       currentInput.push(letter);
       boxesEL[attempts.length * 5 + currentInput.length - 1].innerHTML = letter;
 
@@ -161,7 +189,7 @@
   }
 
   function removeLetter() {
-    if (currentInput.length > 0) {
+    if (stage === 'going' && currentInput.length > 0) {
       currentInput.pop();
       boxesEL[attempts.length * 5 + currentInput.length].innerHTML = '';
 
@@ -169,13 +197,74 @@
     }
   }
 
+  function submitWord() {
+    if (stage === 'going' && currentInput.length === 5) {
+      let result = compareWords(currentInput.join(''), secretWord);
+
+      let revealed = addAttempt(result);
+      if (revealed) {
+        stage = 'win';
+        alert('win!!!');
+      } else if (attempts.length === 6) {
+        alert('fail :(');
+      }
+    } else {
+      alert(`"${currentInput.join('')}" is not 5 letter length`);
+    }
+  }
+
+  function compareWords(wordA, wordB) {
+    let res = [];
+
+    for (let i = 0; i < 5; i++) {
+      if (wordA[i] === wordB[i]) {
+        res.push('green');
+        wordB = wordB.replace(wordA[i], '*');
+      } else if (wordB.includes(wordA[i])) {
+        res.push('yellow');
+        wordB = wordB.replace(wordA[i], '*');
+      } else {
+        res.push(null);
+      }
+    }
+
+    return res;
+  }
+
+  function addAttempt(res) {
+    if (stage !== 'going') return;
+
+    let newAttempt = [];
+
+    let start = attempts.length * 5;
+    let revealed = true;
+    for (let i = 0; i < 5; i++) {
+      let color = res[i];
+      let letter = currentInput[i];
+      newAttempt.push({color, letter});
+      if (color !== 'green') revealed = false;
+
+      if (res[i]) {
+        boxesEL[start + i].classList.add(color);
+        let keyboardLetter = document.querySelector(`#letter-${letter}`);
+        keyboardLetter.classList.add(color);
+        if (color === 'green') {
+          keyboardLetter.classList.add('green');
+          keyboardLetter.classList.remove('yellow');
+        } else {
+          keyboardLetter.classList.add('yellow');
+        }
+      }
+    }
+    attempts.push(newAttempt);
+    currentInput = [];
+
+    return revealed;
+  }
+
   function toggleButtons() {
     deleteEL.toggleAttribute('disabled', currentInput.length === 0);
     enterEL.toggleAttribute('disabled', currentInput.length < 5);
-  }
-
-  function submitWord(word) {
-    alert(word);
   }
 </script>
 </body>
