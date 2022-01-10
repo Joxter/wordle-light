@@ -11,6 +11,7 @@ body {
     height: 100%;
     background-color: #fff;
     color: #333;
+    touch-action: pan-y, pan-x;
     font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
