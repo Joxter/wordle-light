@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
   <link rel="stylesheet" href="./styles.css">
   <title>Wordle by Joxter</title>
 </head>
@@ -10,7 +10,7 @@
 <div class="container">
   <div>
     <header>
-      <h1 style="text-align: center">Wordle<span class="title-label">Joxter</span></h1>
+      <h1 style="text-align: center; margin: 8px 0;">Wordle<span class="title-label">Joxter</span></h1>
       <div class="rules" id="rules" style="display:none;">
         <p>You have 6 guesses to guess the correct word.</p>
         <p>You can guess any valid word.</p>
@@ -56,9 +56,11 @@
       <div class="box"></div>
     </div>
   </div>
-  <div style="text-align: center">
-    <button type="button" class="restart-btn" id="restart">New game</button>
-    <p id="secret" class="secret">secret</p>
+  <div>
+    <div class="result-cont">
+      <button type="button" class="restart-btn" id="restart">New game</button>
+      <p id="secret" class="secret">secret</p>
+    </div>
   </div>
   <div class="keyboard" id="keyboard">
     <div class="row">
