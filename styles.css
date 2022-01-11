@@ -51,7 +51,7 @@ body {
     margin-bottom: 20px;
 }
 
-.rules span {
+.rules .rule-btn {
     display: inline-block;
     color: #555;
     background: #eee;
@@ -87,6 +87,10 @@ body {
     background: #22bd22 !important;
 }
 
+.grey {
+    background-color: #b7b7b7 !important;
+}
+
 .result-cont {
     max-width: 320px;
     margin: 0 auto;
@@ -112,6 +116,7 @@ body {
 }
 
 .keyboard {
+    padding: 0 4px;
 }
 
 .row {
@@ -132,7 +137,8 @@ body {
     border-radius: 8px;
     margin: 0;
     padding: 3px 0;
-    font-size: 22px;
+    font-size: 16px;
+    line-height: 44px;
 }
 
 button[disabled] {
