@@ -20,8 +20,6 @@ try {
   attempts = getSaved('attempts') || [];
   currentInput = [];
 
-  console.log(secretWord);
-
   toggleButtons();
   firstRender();
 
@@ -81,7 +79,7 @@ function paintOverKeyboardKey(letter, color) {
 function printLetter(letter) {
   if (stage === 'going' && currentInput.length < 5) {
     currentInput.push(letter.toLowerCase());
-    boxesEL[attempts.length * 5 + currentInput.length - 1].innerHTML = letter;
+    boxesEL[attempts.length * 5 + currentInput.length - 1].innerHTML = letter.toUpperCase();
 
     toggleButtons();
   }
@@ -103,7 +101,7 @@ function submitWord() {
   }
 
   let currentInputStr = currentInput.join('');
-  if (!dictionary.has(currentInputStr)) {
+  if (!isValidWord(currentInputStr)) {
     alert(`Can't find a word "${currentInputStr}" :(`);
     return;
   }
@@ -165,7 +163,15 @@ function startNewGame() {
 }
 
 function getRandomWord() {
-  return secretWords[Math.floor(Math.random() * secretWords.length)];
+  return window.secretWords[Math.floor(Math.random() * secretWords.length)];
+}
+
+function isValidWord(word) {
+  if (window.dictionary) {
+    return window.dictionary.has(word)
+  }
+  // fallback if the dictionary (huge) is not loaded for some reason
+  return secretWords.includes(word);
 }
 
 function compareWords() {
@@ -196,7 +202,6 @@ function addAttempt(attempt) {
     if (color !== 'green') revealed = false;
 
     if (color) {
-      // todo add animations
       boxesEL[attempts.length * 5 + i].classList.add(color);
       paintOverKeyboardKey(letter, color);
     }
