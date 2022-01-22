@@ -79,15 +79,19 @@ body {
     text-transform: uppercase;
 }
 
-.yellow {
+*[data-color="yellow"] {
     background: #f1f136 !important;
 }
 
-.green {
+*[data-color="yellow"] {
+    background: #f1f136 !important;
+}
+
+*[data-color="green"] {
     background: #22bd22 !important;
 }
 
-.grey {
+*[data-color="grey"] {
     background-color: #b7b7b7 !important;
 }
 

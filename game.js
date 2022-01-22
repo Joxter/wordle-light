@@ -20,7 +20,6 @@ try {
   attempts = getSaved('attempts') || [];
   currentInput = [];
 
-  toggleButtons();
   firstRender();
 
   rulesBtnEL.addEventListener('click', () => {
@@ -69,10 +68,11 @@ try {
 function paintOverKeyboardKey(letter, color) {
   let keyboardLetter = document.querySelector(`#letter-${letter.toLowerCase()}`);
   if (color === 'green') {
-    keyboardLetter.classList.add('green');
-    keyboardLetter.classList.remove('yellow');
-  } else if (color) {
-    keyboardLetter.classList.add(color);
+    keyboardLetter.dataset.color = 'green';
+  } else if (color === 'yellow' && keyboardLetter.dataset.color !== 'green') {
+    keyboardLetter.dataset.color = 'yellow';
+  } else if (color === 'grey' && !keyboardLetter.dataset.color) {
+    keyboardLetter.dataset.color = 'grey';
   }
 }
 
@@ -148,14 +148,10 @@ function startNewGame() {
   secretEL.style.display = '';
   boxesEL.forEach(el => {
     el.innerHTML = '';
-    el.classList.remove('green');
-    el.classList.remove('yellow');
-    el.classList.remove('grey');
+    el.dataset.color = null;
   });
   keyboardEL.querySelectorAll('button').forEach(el => {
-    el.classList.remove('green');
-    el.classList.remove('yellow');
-    el.classList.remove('grey');
+    el.dataset.color = null;
   });
 
   saveState();
@@ -168,7 +164,7 @@ function getRandomWord() {
 
 function isValidWord(word) {
   if (window.dictionary) {
-    return window.dictionary.has(word)
+    return window.dictionary.has(word);
   }
   // fallback if the dictionary (huge) is not loaded for some reason
   return secretWords.includes(word);
@@ -177,17 +173,25 @@ function isValidWord(word) {
 function compareWords() {
   let res = [];
 
+  let letters = {};
   for (let i = 0; i < 5; i++) {
-    let color = null;
-
     if (currentInput[i] === secretWord[i]) {
-      color = 'green';
-    } else if (secretWord.includes(currentInput[i])) {
-      color = 'yellow';
+      res.push({color: 'green', letter: currentInput[i]});
     } else {
-      color = 'grey';
+      letters[secretWord[i]] = (letters[secretWord[i]] || 0) + 1;
+      res.push({color: null, letter: currentInput[i]});
     }
-    res.push({color, letter: currentInput[i]});
+  }
+
+  for (let i = 0; i < 5; i++) {
+    if (currentInput[i] !== secretWord[i]) {
+      if (letters[currentInput[i]] > 0) {
+        letters[currentInput[i]]--;
+        res[i].color = 'yellow';
+      } else {
+        res[i].color = 'grey';
+      }
+    }
   }
 
   return res;
@@ -202,7 +206,7 @@ function addAttempt(attempt) {
     if (color !== 'green') revealed = false;
 
     if (color) {
-      boxesEL[attempts.length * 5 + i].classList.add(color);
+      boxesEL[attempts.length * 5 + i].dataset.color = color;
       paintOverKeyboardKey(letter, color);
     }
   }
@@ -213,10 +217,12 @@ function addAttempt(attempt) {
 }
 
 function firstRender() {
+  toggleButtons();
+
   let i = 0;
   attempts.forEach(attempt => {
     attempt.forEach(({color, letter}) => {
-      boxesEL[i].classList.add(color);
+      boxesEL[i].dataset.color = color;
       boxesEL[i].innerHTML = letter;
       paintOverKeyboardKey(letter, color);
       i++;
